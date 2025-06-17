@@ -88,7 +88,7 @@ kulinariów.
 - Node.js v14 lub nowszy
 - npm v6 lub nowszy
 - MongoDB lokalnie lub w chmurze (np. MongoDB Atlas)
-
+- Express.js v4.21.2
 ### 🛠️ Instalacja:
 
 ## Sklonuj repozytorium:
@@ -116,6 +116,9 @@ Dla systemu Windows:
 - Uruchomić MongoDB.
 - Dodać nowe połączenie i skopiwać URI, np. 'mongodb://localhost:27017'
 - Odpowiednio uzupełnić 'MONGODB_URI' w pliku .env
+### Zainstalować framework Express.js
+```npm install express```
+
 
 ### Uruchomić serwer
 
