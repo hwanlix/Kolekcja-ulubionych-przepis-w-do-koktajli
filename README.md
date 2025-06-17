@@ -80,7 +80,7 @@ kulinariów.
 - dotenv - zarządzanie zmiennymi środowiskowymi
 - method-override - obsługa metod HTTP
 - express-ejs-layouts - układ szablonów EJS
-- expressjs
+- expressjs - framework używający się w node.js z narzędziami do backend budowania aplikacji
 
 ## ⚙️ Instrukcja uruchomienia
 
