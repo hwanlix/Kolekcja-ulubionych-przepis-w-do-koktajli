@@ -18,7 +18,7 @@ kulinariów.
 
 ### 🍸 Przepisy
 
-- Dodawanie przepisów (nazwa, opis, składniki, kategoria, zdjęcie, instrukcja)
+- Dodawanie przepisów (nazwa, opis, składniki, zdjęcie, instrukcja)
 - Edycja i usuwanie własnych przepisów
 - Przeglądanie listy koktajli i szczegółowych widoków
 - Zapisywanie ulubionych przepisów
@@ -147,7 +147,18 @@ Aplikacja będzie dostępna pod adresem http://localhost:PORT odpowiednio z usta
 - Dodanie pliku obrazu 
 - Dodanie dowolnych tagów dla wyszukiwania
 
+#### Przy dodawaniu komentarzy pola:
+- Twój komentarz (opcjonalnie):
+- Ocena w postaci 5 gwiazd do uzupełnienia
+- 
+#### Przy edytowaniu danych użytkownika pola:
+- Nazwa użytkownika
+- Email
+- Obecne hasło
+- Nowe hasło (zgodnie z wymaganiami przy rejestracji minimalnie 6 symbołów)
+- Potwierdź nowe hasło
 
-
+#### Przy dodawaniu do ulubionych:
+- Użyć przycisku 'Dodaj do ulubionych'
 
 ---
