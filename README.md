@@ -34,5 +34,14 @@ PORT=5000
 npm start
 ```
 
+![Strona główna](./screenshots/7.jpg)
+![Dodal_napoj](./screenshots/1.jpg)
+![Dodal_napoj](./screenshots/2.jpg)
+![Menu](./screenshots/3.jpg)
+![Menu](./screenshots/4.jpg)
+![Rejestracja](./screenshots/5.jpg)
+![Logowanie](./screenshots/6.jpg)
+
+
 Po pomyślnym uruchomieniu, aplikacja powinna być dostępna lokalnie pod adresem:
 👉 `http://localhost:5000`
