@@ -102,7 +102,7 @@ cd Kolekcja-ulubionych-przepis-w-do-koktajli
 npm install
 ```
 
-- Uzupełnić 'PORT' i 'SESSION_KEY' w pliku .env
+- Uzupełnić 'PORT' i 'SECRET_KEY' w pliku .env
 
 ## Instalacja MongoDB lokalnie
 
