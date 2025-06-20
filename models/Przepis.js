@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const komentarzSchema = new mongoose.Schema({
     tresc: {
         type: String,
-        required: true
+        required: false
     },
     autor: {
         type: mongoose.Schema.Types.ObjectId,
@@ -35,10 +35,8 @@ const przepisSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    tagi: [{
-        type: Array,
-        required: false
-    }],
+    tagi: [String],
+
     czasPrzygotowania: {
         type: Number,
         required: true
