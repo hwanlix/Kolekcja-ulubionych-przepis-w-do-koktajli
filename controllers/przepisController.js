@@ -21,14 +21,19 @@ exports.getFormularzDodawania = (req, res) => {
 // Dodawanie nowego przepisu
 exports.dodajPrzepis = async (req, res) => {
     try {
-        const { nazwa, skladniki, instrukcje, czasPrzygotowania, kategorie } = req.body;
-        
+        const { nazwa, skladniki, instrukcje, czasPrzygotowania, kategorie, tagi } = req.body;
+
+        const tagiArray = typeof tagi === 'string'
+            ? tagi.split(/[\s,]+/).map(t => t.trim()).filter(t => t.length > 0)
+            : Array.isArray(tagi) ? tagi : [];
+
         const nowyPrzepis = new Przepis({
             nazwa,
-            skladniki: JSON.parse(skladniki),
+            skladniki: req.body.skladniki,
             instrukcje,
             czasPrzygotowania,
             kategorie,
+            tagi: tagiArray,
             autor: req.user._id,
             zdjecie: req.file ? req.file.path : null
         });
@@ -37,6 +42,7 @@ exports.dodajPrzepis = async (req, res) => {
         req.flash('success_msg', 'Przepis został dodany pomyślnie');
         res.redirect('/przepisy');
     } catch (error) {
+        console.error(error);
         req.flash('error_msg', 'Wystąpił błąd podczas dodawania przepisu');
         res.redirect('/przepisy/nowy');
     }
@@ -86,34 +92,40 @@ exports.getFormularzEdycji = async (req, res) => {
 // Aktualizacja przepisu
 exports.aktualizujPrzepis = async (req, res) => {
     try {
-        const { nazwa, skladniki, instrukcje, czasPrzygotowania, kategorie } = req.body;
-        
+        const { nazwa, skladniki, instrukcje, czasPrzygotowania, kategorie, tagi } = req.body;
+
         const przepis = await Przepis.findById(req.params.id);
-        
+
         if (!przepis) {
             req.flash('error_msg', 'Nie znaleziono przepisu');
             return res.redirect('/przepisy');
         }
-        
+
         if (przepis.autor.toString() !== req.user._id.toString()) {
             req.flash('error_msg', 'Nie masz uprawnień do edycji tego przepisu');
             return res.redirect('/przepisy');
         }
-        
+
+        const tagiArray = typeof tagi === 'string'
+            ? tagi.split(/[\s,]+/).map(t => t.trim()).filter(t => t.length > 0)
+            : Array.isArray(tagi) ? tagi : [];
+
         przepis.nazwa = nazwa;
         przepis.skladniki = JSON.parse(skladniki);
         przepis.instrukcje = instrukcje;
         przepis.czasPrzygotowania = czasPrzygotowania;
         przepis.kategorie = kategorie;
-        
+        przepis.tagi = tagiArray;
+
         if (req.file) {
             przepis.zdjecie = req.file.path;
         }
-        
+
         await przepis.save();
         req.flash('success_msg', 'Przepis został zaktualizowany');
         res.redirect(`/przepisy/${przepis._id}`);
     } catch (error) {
+        console.error(error);
         req.flash('error_msg', 'Wystąpił błąd podczas aktualizacji przepisu');
         res.redirect('/przepisy');
     }

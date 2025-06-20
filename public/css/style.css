@@ -4,6 +4,37 @@
     padding: 0;
     box-sizing: border-box;
 }
+.rating-stars {
+    display: flex;
+    justify-content: flex-end;
+    flex-direction: row-reverse; /* чтобы порядок визуально слева направо, хотя input идут 5..1 */
+    gap: 5px;
+    font-size: 2rem;
+}
+
+.rating-stars input[type="radio"] {
+    display: none;
+}
+
+.rating-stars label {
+    color: #ccc;
+    cursor: pointer;
+    user-select: none;
+    transition: color 0.2s;
+}
+
+/* Подсветка звезд при наведении */
+.rating-stars label:hover,
+.rating-stars label:hover ~ label {
+    color: gold;
+}
+
+/* Подсветка выбранных звезд */
+.rating-stars input[type="radio"]:checked ~ label,
+.rating-stars input[type="radio"]:checked + label {
+    color: gold;
+}
+
 
 /* Variables */
 :root {

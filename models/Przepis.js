@@ -35,6 +35,10 @@ const przepisSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    tagi: [{
+        type: Array,
+        required: false
+    }],
     czasPrzygotowania: {
         type: Number,
         required: true

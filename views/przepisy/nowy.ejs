@@ -6,7 +6,7 @@
     <form action="<%= typeof przepis != 'undefined' ? `/przepisy/${przepis._id}?_method=PUT` : '/przepisy' %>" method="POST" enctype="multipart/form-data" class="recipe-form">
         <div class="form-group">
             <label for="nazwa">Nazwa przepisu *</label>
-            <input type="text" id="nazwa" name="nazwa" class="form-control" required 
+            <input type="text" id="nazwa" name="nazwa" class="form-control" required
                 value="<%= typeof przepis != 'undefined' ? przepis.nazwa : '' %>"
                 placeholder="wprowadz nazwe...">
         </div>
@@ -87,7 +87,7 @@
         <div class="form-group">
             <label for="tagi">Tagi</label>
             <p class="text-muted mb-3">Dodaj tagi oddzielone przecinkami, aby ułatwić znalezienie przepisu.</p>
-            <input type="text" id="tagi" name="tagi" class="form-control" 
+            <input type="text" id="tagi" name="tagi" class="form-control"
                 value="<%= (typeof przepis !== 'undefined' && Array.isArray(przepis.tagi)) ? przepis.tagi.join(', ') : '' %>"
                 placeholder="np. bezalkocholowe">
         </div>
@@ -111,21 +111,33 @@ document.addEventListener('DOMContentLoaded', function() {
     function updateSkladnikIndices() {
         const skladnikInputs = skladnikiContainer.getElementsByClassName('skladnik-input');
         Array.from(skladnikInputs).forEach((input, index) => {
-            const inputs = input.getElementsByTagName('input');
-            const select = input.getElementsByTagName('select')[0];
-            Array.from(inputs).forEach(input => {
-                const fieldName = input.name.split(']')[1];
-                input.name = `skladniki[${index}]${fieldName}`;
+            const inputs = input.querySelectorAll('input');
+            const select = input.querySelector('select');
+
+            inputs.forEach(inputEl => {
+                // Извлекаем поле из имени в формате skladniki[число][pole]
+                // Например, из "skladniki[3][nazwa]" получаем "nazwa"
+                const matches = inputEl.name.match(/\[([^\]]+)\]$/);
+                if (matches && matches[1]) {
+                    inputEl.name = `skladniki[${index}][${matches[1]}]`;
+                }
             });
-            select.name = `skladniki[${index}][jednostka]`;
+
+            if (select) {
+                const matches = select.name.match(/\[([^\]]+)\]$/);
+                if (matches && matches[1]) {
+                    select.name = `skladniki[${index}][${matches[1]}]`;
+                }
+            }
         });
     }
+
 
     // Dodawanie nowego pola składnika
     dodajSkladnikBtn.addEventListener('click', function() {
         const skladnikInputs = skladnikiContainer.getElementsByClassName('skladnik-input');
         const newIndex = skladnikInputs.length;
-        
+
         const newSkladnik = document.createElement('div');
         newSkladnik.className = 'skladnik-input';
         newSkladnik.innerHTML = `
@@ -145,7 +157,7 @@ document.addEventListener('DOMContentLoaded', function() {
             </div>
         `;
         skladnikiContainer.appendChild(newSkladnik);
-        
+
         // Dodaj animację
         newSkladnik.style.opacity = '0';
         newSkladnik.style.transform = 'translateY(20px)';
@@ -168,7 +180,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 skladnikInput.style.transition = 'all 0.3s ease';
                 skladnikInput.style.opacity = '0';
                 skladnikInput.style.transform = 'translateX(20px)';
-                
+
                 setTimeout(() => {
                     skladnikInput.remove();
                     // Aktualizuj indeksy po usunięciu składnika
@@ -181,4 +193,4 @@ document.addEventListener('DOMContentLoaded', function() {
     // Inicjalizacja indeksów przy załadowaniu strony
     updateSkladnikIndices();
 });
-</script> 
+</script>

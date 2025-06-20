@@ -41,7 +41,9 @@
                     <ul class="ingredients-list">
                         <% przepis.skladniki.forEach(function(skladnik) { %>
                             <li>
-                                <span class="ingredient-item"><%= skladnik.nazwa %> - <%= skladnik.ilosc %> <%= skladnik.jednostka %></span>
+                                <span class="ingredient-item">
+                                    <%= skladnik.nazwa %> - <%= skladnik.ilosc %><%= skladnik.jednostka ? ' ' + skladnik.jednostka : '' %>
+                                </span>
                             </li>
                         <% }); %>
                     </ul>
@@ -83,13 +85,13 @@
                         <div class="rating-stars">
                             <% for(let i = 5; i >= 1; i--) { %>
                                 <input type="radio" id="star<%= i %>" name="ocena" value="<%= i %>" required
-                                    <%= (user && user.oceny && user.oceny.find(o => o.przepis && o.przepis.equals(przepis._id))?.ocena === i) ? 'checked' : '' %>>
+                                        <%= (user && user.oceny && user.oceny.find(o => o.przepis && o.przepis.equals(przepis._id))?.ocena === i) ? 'checked' : '' %>>
                                 <label for="star<%= i %>"><i class="fas fa-star"></i></label>
                             <% } %>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="komentarz">Twój komentarz (opcjonalnie):</label>
+                        <label for="komentarz">Twój komentarz*:</label>
                         <textarea class="form-control" id="komentarz" name="komentarz" rows="3"></textarea>
                     </div>
                     <button type="submit" class="btn btn-primary" id="submitRating">Dodaj ocenę</button>
@@ -97,15 +99,15 @@
             </div>
 
             <script>
-            document.getElementById('ratingForm').addEventListener('submit', function(e) {
-                const selectedRating = document.querySelector('input[name="ocena"]:checked');
-                if (!selectedRating) {
-                    e.preventDefault();
-                    alert('Proszę wybrać ocenę przed wysłaniem formularza.');
-                    return false;
-                }
-                console.log('Wysyłanie oceny:', selectedRating.value);
-            });
+                document.getElementById('ratingForm').addEventListener('submit', function(e) {
+                    const selectedRating = document.querySelector('input[name="ocena"]:checked');
+                    if (!selectedRating) {
+                        e.preventDefault();
+                        alert('Proszę wybrać ocenę przed wysłaniem formularza.');
+                        return false;
+                    }
+                    console.log('Wysyłanie oceny:', selectedRating.value);
+                });
             </script>
         <% } else { %>
             <div class="alert alert-info">
@@ -118,8 +120,8 @@
                 <% przepis.komentarze.sort((a, b) => new Date(b.dataUtworzenia) - new Date(a.dataUtworzenia)).forEach(function(komentarz) { %>
                     <div class="comment-card" id="komentarz-<%= komentarz._id %>">
                         <div class="comment-header">
-                            <img src="<%= komentarz.autor.avatar || '/images/default-avatar.png' %>" 
-                                alt="<%= komentarz.autor.nazwa %>" class="comment-avatar">
+                            <img src="<%= komentarz.autor.avatar || '/images/default-avatar.png' %>"
+                                 alt="<%= komentarz.autor.nazwa %>" class="comment-avatar">
                             <div class="comment-meta">
                                 <strong><%= komentarz.autor.nazwa %></strong>
                                 <div class="rating-display">
@@ -134,7 +136,7 @@
                                 </div>
                                 <small><%= new Date(komentarz.dataUtworzenia).toLocaleDateString() %></small>
                                 <% if(user && komentarz.autor._id.equals(user._id)) { %>
-                                    <button class="btn btn-sm btn-danger delete-comment" 
+                                    <button class="btn btn-sm btn-danger delete-comment"
                                             data-przepis-id="<%= przepis._id %>"
                                             data-komentarz-id="<%= komentarz._id %>">
                                         <i class="fas fa-trash"></i>
@@ -155,318 +157,55 @@
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const toggleFavoriteBtn = document.getElementById('toggleFavorite');
-    if (toggleFavoriteBtn) {
-        toggleFavoriteBtn.addEventListener('click', function() {
-            const recipeId = this.dataset.recipeId;
-            fetch(`/przepisy/${recipeId}/ulubione`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                const icon = this.querySelector('i');
-                const text = this.querySelector('span');
-                if (data.isFavorite) {
-                    icon.classList.remove('fa-heart-o');
-                    icon.classList.add('fa-heart');
-                    text.textContent = 'Usuń z ulubionych';
-                } else {
-                    icon.classList.remove('fa-heart');
-                    icon.classList.add('fa-heart-o');
-                    text.textContent = 'Dodaj do ulubionych';
-                }
-            })
-            .catch(error => console.error('Error:', error));
-        });
-    }
-});
-
-// Obsługa usuwania komentarzy
-document.querySelectorAll('.delete-comment').forEach(button => {
-    button.addEventListener('click', async function() {
-        if (!confirm('Czy na pewno chcesz usunąć ten komentarz?')) {
-            return;
-        }
-
-        const przepisId = this.dataset.przepisId;
-        const komentarzId = this.dataset.komentarzId;
-        const komentarzElement = document.getElementById(`komentarz-${komentarzId}`);
-
-        try {
-            const response = await fetch(`/przepisy/${przepisId}/komentarze/${komentarzId}`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
+    document.addEventListener('DOMContentLoaded', function() {
+        const toggleFavoriteBtn = document.getElementById('toggleFavorite');
+        if (toggleFavoriteBtn) {
+            toggleFavoriteBtn.addEventListener('click', function() {
+                const recipeId = this.dataset.recipeId;
+                fetch(`/przepisy/${recipeId}/ulubione`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        const icon = this.querySelector('i');
+                        const text = this.querySelector('span');
+                        if (data.isFavorite) {
+                            icon.classList.remove('fa-heart-o');
+                            icon.classList.add('fa-heart');
+                            text.textContent = 'Usuń z ulubionych';
+                        } else {
+                            icon.classList.remove('fa-heart');
+                            icon.classList.add('fa-heart-o');
+                            text.textContent = 'Dodaj do ulubionych';
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
             });
-
-            const data = await response.json();
-
-            if (data.success) {
-                // Usuń komentarz z DOM
-                komentarzElement.remove();
-                
-                // Aktualizuj wyświetlaną średnią ocen i liczbę ocen
-                const sredniaElement = document.querySelector('.recipe-meta span:has(.fa-star)');
-                if (sredniaElement) {
-                    sredniaElement.innerHTML = `<i class="fas fa-star"></i> ${data.sredniaOcen.toFixed(1)} (${data.liczbaOcen} ocen)`;
-                }
-
-                // Jeśli nie ma już komentarzy, wyświetl komunikat
-                const commentsSection = document.querySelector('.comments-section');
-                if (commentsSection && !commentsSection.querySelector('.comment-card')) {
-                    commentsSection.innerHTML = '<p class="text-muted">Brak komentarzy. Bądź pierwszy!</p>';
-                }
-            } else {
-                alert(data.error || 'Wystąpił błąd podczas usuwania komentarza');
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            alert('Wystąpił błąd podczas usuwania komentarza');
         }
     });
-});
+
+    // Obsługa usuwania komentarzy
+    document.querySelectorAll('.delete-comment').forEach(button => {
+        button.addEventListener('click', async function() {
+            if (!confirm('Czy na pewno chcesz usunąć ten komentarz?')) return;
+            const przepisId = this.dataset.przepisId;
+            const komentarzId = this.dataset.komentarzId;
+
+            try {
+                const response = await fetch(`/przepisy/${przepisId}/komentarze/${komentarzId}`, {
+                    method: 'DELETE'
+                });
+                if (response.ok) {
+                    document.getElementById(`komentarz-${komentarzId}`).remove();
+                } else {
+                    alert('Nie udało się usunąć komentarza.');
+                }
+            } catch(e) {
+                alert('Błąd serwera podczas usuwania komentarza.');
+            }
+        });
+    });
 </script>
-<style>
-/* Ogólne */
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f4f7f9;
-    color: #333;
-    padding: 2rem;
-}
-
-.recipe-details {
-    max-width: 1100px;
-    margin: auto;
-    background: #fff;
-    padding: 2rem;
-    border-radius: 16px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-}
-
-/* Nagłówek i meta */
-.recipe-header {
-    display: flex;
-    gap: 2rem;
-    flex-wrap: wrap;
-    margin-bottom: 2rem;
-    align-items: center;
-}
-
-.recipe-main-image {
-    max-width: 350px;
-    width: 100%;
-    border-radius: 12px;
-    object-fit: cover;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-}
-
-.recipe-title-section h1 {
-    font-size: 2.2rem;
-    margin-bottom: 0.75rem;
-}
-
-.recipe-meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-    font-size: 0.95rem;
-    color: #555;
-}
-
-.recipe-meta i {
-    color: #888;
-    margin-right: 0.3rem;
-}
-
-/* Przycisk ulubionych i akcje */
-.recipe-actions {
-    display: flex;
-    gap: 1rem;
-    flex-wrap: wrap;
-    margin-bottom: 2rem;
-}
-
-#toggleFavorite {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.btn-outline-primary i {
-    color: #dc3545;
-}
-
-/* Sekcja składników i instrukcji */
-.ingredients-section,
-.instructions-section {
-    background: #f9fbfc;
-    padding: 1.5rem;
-    border-radius: 12px;
-    margin-bottom: 2rem;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-}
-
-.ingredients-section h2,
-.instructions-section h2 {
-    font-size: 1.5rem;
-    margin-bottom: 1rem;
-}
-
-.ingredients-list {
-    list-style: none;
-    padding-left: 0;
-    margin: 0;
-}
-
-.ingredient-item {
-    background: #eef3f7;
-    padding: 0.5rem 1rem;
-    border-radius: 8px;
-    margin-bottom: 0.5rem;
-    display: inline-block;
-}
-
-.instructions-list {
-    padding-left: 1.5rem;
-}
-
-/* Tagi */
-.recipe-tags .badge {
-    margin-right: 0.5rem;
-    margin-bottom: 0.5rem;
-    font-size: 0.9rem;
-    background-color: #6c757d;
-    color: white;
-    padding: 0.4rem 0.75rem;
-    border-radius: 10px;
-    text-decoration: none;
-}
-
-/* Oceny */
-.ratings-section h3 {
-    margin-bottom: 1.5rem;
-}
-
-.rating-stars {
-    display: flex;
-    flex-direction: row-reverse;
-    justify-content: flex-start;
-    gap: 0.3rem;
-}
-
-.rating-stars input[type="radio"] {
-    display: none;
-}
-
-.rating-stars label {
-    font-size: 1.5rem;
-    color: #ccc;
-    cursor: pointer;
-    transition: color 0.2s;
-}
-
-.rating-stars input[type="radio"]:checked ~ label,
-.rating-stars label:hover,
-.rating-stars label:hover ~ label {
-    color: #f5b301;
-}
-
-/* Komentarze */
-.comments-section {
-    margin-top: 2rem;
-}
-
-.comment-card {
-    background: #f5f7f9;
-    border-radius: 12px;
-    padding: 1rem;
-    margin-bottom: 1.5rem;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-}
-
-.comment-header {
-    display: flex;
-    align-items: center;
-    margin-bottom: 0.5rem;
-}
-
-.comment-avatar {
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    object-fit: cover;
-    margin-right: 1rem;
-    border: 2px solid #ddd;
-}
-
-.comment-meta {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-}
-
-.comment-meta strong {
-    font-size: 1rem;
-    color: #222;
-}
-
-.comment-content {
-    font-size: 0.95rem;
-    line-height: 1.5;
-    color: #444;
-}
-
-/* Ocena w komentarzu */
-.rating-display .fa-star {
-    color: #f5b301;
-    font-size: 1rem;
-}
-
-.rating-display .far.fa-star {
-    color: #ccc;
-}
-
-/* Przycisk usuń komentarz */
-.delete-comment {
-    padding: 0.3rem 0.6rem;
-    font-size: 0.85rem;
-    background-color: transparent;
-    border: 1px solid #dc3545;
-    border-radius: 6px;
-    color: #dc3545;
-    margin-top: 0.3rem;
-    align-self: flex-start;
-}
-
-.delete-comment:hover {
-    background-color: #dc3545;
-    color: white;
-}
-
-/* Formularz oceny */
-.rating-form .form-group {
-    margin-bottom: 1rem;
-}
-
-textarea.form-control {
-    resize: vertical;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-}
-
-.btn-primary {
-    background-color: #007bff;
-    border-color: #007bff;
-    border-radius: 8px;
-}
-
-.btn-primary:hover {
-    background-color: #0069d9;
-}
-</style>
