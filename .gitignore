@@ -30,8 +30,6 @@ pids/
 *.seed
 *.pid.lock
 
-# Directory for uploaded files
-public/uploads/
 
 # Coverage directory used by tools like istanbul
 coverage/
